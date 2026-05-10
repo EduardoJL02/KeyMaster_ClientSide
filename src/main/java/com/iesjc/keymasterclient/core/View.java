@@ -6,7 +6,8 @@ package com.iesjc.keymasterclient.core;
 public enum View {
     LOGIN("/fxml/login-view.fxml"),
     DASHBOARD("/fxml/dashboard-view.fxml"),
-    INVENTARIO("/fxml/inventory-view.fxml");
+    INVENTARIO("/fxml/inventory-view.fxml"),
+    MAIN_LAYOUT("/fxml/main-layout.fxml");
 
     private final String fxmlPath;
 

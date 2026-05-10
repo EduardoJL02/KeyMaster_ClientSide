@@ -3,12 +3,14 @@ package com.iesjc.keymasterclient.core;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Router {
     private static Router instance;
     private Stage primaryStage;
+    private StackPane contentArea;
 
     private Router() {}
 
@@ -23,6 +25,8 @@ public class Router {
         this.primaryStage = stage;
     }
 
+    public void setContentArea(StackPane area) { this.contentArea = area; }
+
     /**
      * Cambia la escena actual por la vista indicada.
      */
@@ -31,11 +35,17 @@ public class Router {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(view.getFxmlPath()));
             Parent root = loader.load();
 
-            // Si la escena no existe, la creamos. Si existe, solo cambiamos el root.
-            if (primaryStage.getScene() == null) {
-                primaryStage.setScene(new Scene(root, 1024, 768));
-            } else {
+            // Lógica de Enrutamiento Inteligente
+            if (view == View.LOGIN || view == View.MAIN_LAYOUT) {
                 primaryStage.getScene().setRoot(root);
+                this.contentArea = null; // Resetear área interna
+            } else if (contentArea != null) {
+                // Es una vista interna (Dashboard, Inventario, etc.)
+                contentArea.getChildren().setAll(root);
+            } else {
+                // Si intentamos cargar Dashboard sin MainLayout, cargamos MainLayout primero
+                switchView(View.MAIN_LAYOUT);
+                // La inicialización del MainLayoutController volverá a llamar a switchView(DASHBOARD)
             }
 
             primaryStage.show();

@@ -1,5 +1,8 @@
 package com.iesjc.keymasterclient.core;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * Gestor global de sesión (Singleton).
  * Almacena el JWT y la información del usuario autenticado.
@@ -8,6 +11,8 @@ public class SessionManager {
 
     private static SessionManager instance;
     private String token;
+
+    private final StringProperty userName = new SimpleStringProperty("Usuario no identificado");
 
     // TODO: En el futuro aquí guardaremos el UsuarioDTO para saber quién está logueado y su ROL (Admin/Profesor)
     // private UsuarioDTO currentUser;
@@ -32,11 +37,24 @@ public class SessionManager {
         this.token = token;
     }
 
+    public String getUserName() {
+        return userName.get();
+    }
+
+    public void setUserName(String name) {
+        this.userName.set(name);
+    }
+
+    public StringProperty userNameProperty() {
+        return userName;
+    }
+
     /**
      * Limpia los datos de sesión cuando el usuario sale o el token caduca.
      */
     public void logout() {
         this.token = null;
+        this.userName.set("Usuario no identificado");
         // this.currentUser = null;
     }
 

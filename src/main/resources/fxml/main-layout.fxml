@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.iesjc.keymasterclient.views.MainLayoutController">
+
+    <left>
+        <VBox prefWidth="250.0" spacing="10.0" style="-fx-background-color: #2b4c65;">
+            <children>
+                <VBox alignment="CENTER" prefHeight="150.0" spacing="5.0">
+                    <Label text="KM" textFill="WHITE">
+                        <font><Font name="System Bold" size="40.0" /></font>
+                    </Label>
+                    <Label text="KeyMaster Center" textFill="#17b9a5" />
+                </VBox>
+
+                <ToggleButton fx:id="btnDashboard" alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#onNavigate" selected="true" styleClass="menu-button" text="Panel Principal">
+                    <toggleGroup><ToggleGroup fx:id="menuGroup" /></toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="btnInventory" alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#onNavigate" styleClass="menu-button" text="Inventario de llaves" toggleGroup="$menuGroup" />
+                <ToggleButton fx:id="btnStaff" alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#onNavigate" styleClass="menu-button" text="Miembros del personal" toggleGroup="$menuGroup" />
+                <ToggleButton fx:id="btnLoans" alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#onNavigate" styleClass="menu-button" text="Préstamos activos" toggleGroup="$menuGroup" />
+                <ToggleButton fx:id="btnReports" alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#onNavigate" styleClass="menu-button" text="Reportes / Informes" toggleGroup="$menuGroup" />
+                <ToggleButton fx:id="btnSettings" alignment="BASELINE_LEFT" maxWidth="Infinity" onAction="#onNavigate" styleClass="menu-button" text="Ajustes" toggleGroup="$menuGroup" />
+
+                <Region VBox.vgrow="ALWAYS" />
+
+                <VBox spacing="5.0" style="-fx-border-color: #17b9a5; -fx-border-width: 1 0 0 0;">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <Label fx:id="lblUserStatus" text="Conectado: Carga..." textFill="WHITE" wrapText="true" />
+                    <Button onAction="#onLogout" style="-fx-background-color: transparent; -fx-text-fill: #ff6b6b; -fx-cursor: hand;" text="Cerrar Sesión" />
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #f4f4f4;" />
+    </center>
+</BorderPane>
