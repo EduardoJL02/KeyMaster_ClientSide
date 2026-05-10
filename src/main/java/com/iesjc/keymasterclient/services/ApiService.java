@@ -1,5 +1,6 @@
 package com.iesjc.keymasterclient.services;
 
+import com.iesjc.keymasterclient.core.SessionManager;
 import javafx.application.Platform;
 
 import java.net.URI;
@@ -33,6 +34,28 @@ public class ApiService {
                 .header("Accept", "application/json");
 
         // Inyectar JWT si existe
+        if (sessionManager.getToken() != null) {
+            requestBuilder.header("Authorization", "Bearer " + sessionManager.getToken());
+        }
+
+        client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> Platform.runLater(() -> handleResponse(response, onSuccess, onError)))
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> onError.accept("Error de conexión: " + ex.getMessage()));
+                    return null;
+                });
+    }
+
+    /**
+     * Realiza una petición POST asíncrona con un cuerpo JSON.
+     */
+    public void postAsync(String endpoint, String jsonBody, Consumer<String> onSuccess, Consumer<String> onError) {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + endpoint))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
+
         if (sessionManager.getToken() != null) {
             requestBuilder.header("Authorization", "Bearer " + sessionManager.getToken());
         }
