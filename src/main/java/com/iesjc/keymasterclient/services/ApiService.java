@@ -1,85 +1,43 @@
 package com.iesjc.keymasterclient.services;
 
-import com.iesjc.keymasterclient.core.SessionManager;
-import javafx.application.Platform;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.iesjc.keymasterclient.core.SessionContext;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
+/**
+ * Servicio central para la comunicación HTTP asíncrona con el Backend Spring Boot.
+ * (La autenticación se maneja exclusivamente en AuthService)
+ */
 public class ApiService {
-    private static final String BASE_URL = "http://localhost:8080/api";
-    private final HttpClient client;
-    private final SessionManager sessionManager;
 
-    public ApiService(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
-        this.client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+    protected final HttpClient httpClient;
+    protected final ObjectMapper objectMapper;
+
+    public ApiService() {
+        this.httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build();
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
 
     /**
-     * Realiza una petición GET asíncrona.
+     * Construye una petición HTTP base inyectando automáticamente el Token JWT si existe.
+     * Este métod0 será utilizado por el resto de servicios (LlaveService, PrestamoService, etc.)
      */
-    public void getAsync(String endpoint, Consumer<String> onSuccess, Consumer<String> onError) {
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + endpoint))
-                .GET()
-                .header("Accept", "application/json");
+    protected HttpRequest.Builder getAuthenticatedRequestBuilder(String endpoint) {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(SessionContext.BASE_URL + endpoint))
+                .header("Content-Type", "application/json");
 
-        // Inyectar JWT si existe
-        if (sessionManager.getToken() != null) {
-            requestBuilder.header("Authorization", "Bearer " + sessionManager.getToken());
+        // Si tenemos sesión iniciada, inyectamos el Token de forma automática
+        String token = SessionContext.getInstance().getToken();
+        if (token != null && !token.isEmpty()) {
+            builder.header("Authorization", "Bearer " + token);
         }
 
-        client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
-                .thenAccept(response -> Platform.runLater(() -> handleResponse(response, onSuccess, onError)))
-                .exceptionally(ex -> {
-                    Platform.runLater(() -> onError.accept("Error de conexión: " + ex.getMessage()));
-                    return null;
-                });
+        return builder;
     }
-
-    /**
-     * Realiza una petición POST asíncrona con un cuerpo JSON.
-     */
-    public void postAsync(String endpoint, String jsonBody, Consumer<String> onSuccess, Consumer<String> onError) {
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + endpoint))
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
-
-        if (sessionManager.getToken() != null) {
-            requestBuilder.header("Authorization", "Bearer " + sessionManager.getToken());
-        }
-
-        client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
-                .thenAccept(response -> Platform.runLater(() -> handleResponse(response, onSuccess, onError)))
-                .exceptionally(ex -> {
-                    Platform.runLater(() -> onError.accept("Error de conexión: " + ex.getMessage()));
-                    return null;
-                });
-    }
-
-    private void handleResponse(HttpResponse<String> response, Consumer<String> onSuccess, Consumer<String> onError) {
-        if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            onSuccess.accept(response.body());
-        } else if (response.statusCode() == 401) {
-            // RSIP: Intercepción global de token caducado
-            sessionManager.logout();
-            onError.accept("Sesión expirada. Por favor, vuelva a iniciar sesión.");
-            // Aquí notificaríamos al Router para volver al Login
-        } else {
-            onError.accept("Error del servidor HTTP: " + response.statusCode());
-        }
-    }
-
-    // TODO: Implementar postAsync, putAsync, deleteAsync siguiendo el mismo patrón.
 }

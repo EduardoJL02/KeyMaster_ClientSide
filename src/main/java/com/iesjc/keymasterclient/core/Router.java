@@ -3,55 +3,61 @@ package com.iesjc.keymasterclient.core;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
+/**
+ * Gestor centralizado de navegación (SceneManager).
+ * Se encarga de cambiar el contenido de la ventana principal sin abrir ventanas nuevas.
+ */
 public class Router {
-    private static Router instance;
-    private Stage primaryStage;
-    private StackPane contentArea;
 
-    private Router() {}
-
-    public static Router getInstance() {
-        if (instance == null) {
-            instance = new Router();
-        }
-        return instance;
-    }
-
-    public void init(Stage stage) {
-        this.primaryStage = stage;
-    }
-
-    public void setContentArea(StackPane area) { this.contentArea = area; }
+    // Referencia global a la ventana principal de la aplicación
+    private static Stage ventanaPrincipal;
 
     /**
-     * Cambia la escena actual por la vista indicada.
+     * Se llama una sola vez al arrancar la app para guardar la referencia de la ventana.
      */
-    public void switchView(View view) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(view.getFxmlPath()));
-            Parent root = loader.load();
+    public static void inicializar(Stage stage) {
+        ventanaPrincipal = stage;
+    }
 
-            // Lógica de Enrutamiento Inteligente
-            if (view == View.LOGIN || view == View.MAIN_LAYOUT) {
-                primaryStage.getScene().setRoot(root);
-                this.contentArea = null; // Resetear área interna
-            } else if (contentArea != null) {
-                // Es una vista interna (Dashboard, Inventario, etc.)
-                contentArea.getChildren().setAll(root);
-            } else {
-                // Si intentamos cargar Dashboard sin MainLayout, cargamos MainLayout primero
-                switchView(View.MAIN_LAYOUT);
-                // La inicialización del MainLayoutController volverá a llamar a switchView(DASHBOARD)
-            }
-
-            primaryStage.show();
-        } catch (IOException e) {
-            System.err.println("Error al cargar la vista: " + view.getFxmlPath());
-            e.printStackTrace();
+    /**
+     * Métod0 genérico para cambiar de pantalla.
+     * @param rutaFxml La ruta del archivo FXML (ej. "/fxml/LoginView.fxml")
+     * @param titulo El título que aparecerá en la barra superior de la ventana
+     */
+    public static void navegar(String rutaFxml, String titulo) {
+        if (ventanaPrincipal == null) {
+            throw new IllegalStateException("El Router no ha sido inicializado.");
         }
+
+        try {
+            // Cargamos el diseño FXML desde la carpeta resources
+            FXMLLoader loader = new FXMLLoader(Router.class.getResource(rutaFxml));
+            Parent vista = loader.load();
+
+            // Creamos una nueva "Escena" con ese diseño y la ponemos en la ventana
+            Scene escena = new Scene(vista);
+            ventanaPrincipal.setScene(escena);
+            ventanaPrincipal.setTitle("KeyMaster San Juan de la Cruz - " + titulo);
+            ventanaPrincipal.centerOnScreen(); // Centramos la ventana en el monitor
+
+        } catch (IOException e) {
+            System.err.println("Error crítico al cargar la vista: " + rutaFxml);
+            e.printStackTrace();
+            // Aquí en el futuro usaremos AlertHelper para mostrar un pop-up de error visual
+        }
+    }
+
+    // Metodos de acceso rapido para las pantallas
+
+    public static void irALogin() {
+        navegar("/fxml/LoginView.fxml", "Iniciar Sesión");
+    }
+
+    public static void irADashboard() {
+        navegar("/fxml/DashboardView.fxml", "Panel Principal");
     }
 }

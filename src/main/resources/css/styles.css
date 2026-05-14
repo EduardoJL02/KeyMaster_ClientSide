@@ -1,0 +1,24 @@
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #adb5bd;
+    -fx-padding: 12 15;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #3e4753;
+}
+
+.sidebar-button:selected {
+    -fx-background-color: #17b9a5; /* Verde Hover */
+    -fx-text-fill: white;
+}
+
+.logout-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: #ff6b6b;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}

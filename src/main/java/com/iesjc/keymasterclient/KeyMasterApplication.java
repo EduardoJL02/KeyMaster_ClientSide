@@ -1,7 +1,6 @@
 package com.iesjc.keymasterclient;
 
 import com.iesjc.keymasterclient.core.Router;
-import com.iesjc.keymasterclient.core.View;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -10,36 +9,44 @@ import javafx.stage.Stage;
 import java.util.Optional;
 
 public class KeyMasterApplication extends Application {
+
     @Override
     public void start(Stage stage) {
-        Router router = Router.getInstance();
-        router.init(stage);
+        Router.inicializar(stage);
 
-        stage.setTitle("KeyMaster Center - Inicio de sesión"); //
-        stage.setResizable(false); //
-
-        // Interceptar el cierre de la ventana
+        // Configuracion del comportamiento al pulsar la 'X' de la ventana
         stage.setOnCloseRequest(event -> {
-            event.consume(); // Detener el cierre automático
+            // Consumimos el evento para evitar que la ventana se cierre automáticamente
+            event.consume();
             mostrarConfirmacionSalida(stage);
         });
 
-        router.switchView(View.LOGIN);
+        // Mostrar ventana
+        stage.show();
+
+        // 4. (Opcional por ahora) Lanzaríamos la primera pantalla.
+        // Descomentaremos esto cuando tengamos el LoginView.fxml creado:
+         Router.irALogin();
     }
 
+    /**
+     * Muestra un cuadro de diálogo nativo preguntando si se desea salir.
+     */
     private void mostrarConfirmacionSalida(Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmar salida");
-        alert.setHeaderText("¿Estás seguro de que deseas salir?");
-        alert.setContentText("Se cerrará la aplicación KeyMaster Center.");
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle("Confirmar Salida");
+        alerta.setHeaderText("¿Estás seguro de que deseas salir?");
+        alerta.setContentText("Cualquier operación en curso podría cancelarse.");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            stage.close(); //
+        // Mostrar la alerta y esperar a que el usuario pulse un botón
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            // Si pulsa OK, cerramos la ventana y la aplicación se detiene
+            stage.close();
         }
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }

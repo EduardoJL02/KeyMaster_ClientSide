@@ -1,54 +1,81 @@
 package com.iesjc.keymasterclient.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iesjc.keymasterclient.core.SessionManager;
-import com.iesjc.keymasterclient.models.AuthResponse;
-import com.iesjc.keymasterclient.models.LoginRequest;
+import com.iesjc.keymasterclient.core.SessionContext;
+import com.iesjc.keymasterclient.models.LoginRequestDTO;
+import com.iesjc.keymasterclient.models.LoginResponseDTO;
 
-import java.util.function.Consumer;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 
+/**
+ * Servicio exclusivo para la gestión de Autenticación (Login / Logout).
+ */
 public class AuthService {
 
-    private final ApiService apiService;
+    private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private final SessionManager sessionManager;
 
     public AuthService() {
-        this.sessionManager = SessionManager.getInstance();
-        this.apiService = new ApiService(this.sessionManager);
+        this.httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build();
         this.objectMapper = new ObjectMapper();
     }
 
-    public void login(String username, String password, Runnable onSuccess, Runnable onUnauthorized, Consumer<String> onError) {
-        try {
-            // 1. Crear el DTO y pasarlo a JSON
-            LoginRequest request = new LoginRequest(username, password);
-            String jsonBody = objectMapper.writeValueAsString(request);
+    /**
+     * Realiza la petición de inicio de sesión de forma asíncrona.
+     * @return CompletableFuture con 'true' si el login fue exitoso, o lanza una excepción si falla.
+     */
+    public CompletableFuture<Boolean> login(String username, String password) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // 1. Preparar el DTO con las credenciales
+                LoginRequestDTO requestDto = new LoginRequestDTO(username, password);
+                String jsonBody = objectMapper.writeValueAsString(requestDto);
 
-            // 2. Hacer la petición POST al backend
-            apiService.postAsync("/auth/login", jsonBody,
-                    // Respuesta 200 OK
-                    responseBody -> {
-                        try {
-                            // Parsear la respuesta y guardar el Token en el SessionManager
-                            AuthResponse authResponse = objectMapper.readValue(responseBody, AuthResponse.class);
-                            sessionManager.setToken(authResponse.token());
-                            onSuccess.run();
-                        } catch (Exception e) {
-                            onError.accept("Error al procesar la respuesta del servidor.");
-                        }
-                    },
-                    // Manejo de Errores (401 u otros)
-                    errorMessage -> {
-                        if (errorMessage.contains("401")) {
-                            onUnauthorized.run();
-                        } else {
-                            onError.accept(errorMessage);
-                        }
-                    }
-            );
-        } catch (Exception e) {
-            onError.accept("Error interno al preparar la petición.");
-        }
+                // 2. Construir la petición POST
+                // Fíjate que aquí no usamos Token en la cabecera, porque aún no estamos logueados
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(SessionContext.BASE_URL + "/auth/login"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                        .build();
+
+                // 3. Enviar petición y esperar respuesta
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+                // 4. Analizar el resultado
+                if (response.statusCode() == 200) {
+                    LoginResponseDTO loginResponse = objectMapper.readValue(response.body(), LoginResponseDTO.class);
+
+                    // 5. Guardamos la sesión globalmente para que toda la app sepa quién somos
+                    SessionContext session = SessionContext.getInstance();
+                    session.setToken(loginResponse.getToken());
+                    session.setUsername(loginResponse.getUsername());
+                    session.setRol(loginResponse.getRol());
+
+                    return true;
+                } else {
+                    // Si el servidor devuelve 401 Unauthorized
+                    throw new RuntimeException("Usuario o contraseña incorrectos.");
+                }
+
+            } catch (Exception e) {
+                // Capturamos cualquier error de red (Ej. El backend de Spring Boot está apagado)
+                throw new RuntimeException("Error al conectar con el servidor: " + e.getMessage(), e);
+            }
+        });
+    }
+
+    /**
+     * Cierra la sesión actual del usuario.
+     */
+    public void logout() {
+        // Borramos los datos de la memoria
+        SessionContext.getInstance().clear();
+
+        // El Router se encargará de llevarnos a la pantalla de Login después de llamar a este method.
     }
 }
