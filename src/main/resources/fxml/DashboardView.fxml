@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="708.0" prefWidth="784.0" spacing="30.0" style="-fx-background-color: #f4f7f6;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.iesjc.keymasterclient.views.DashboardViewController">
+   <children>
+      <VBox spacing="5.0">
+         <children>
+            <Label fx:id="lblWelcome" text="Bienvenido de nuevo, Admin" textFill="#2b4c65">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <Label text="Este es el resumen de estado de KeyMaster Center para hoy." textFill="#666666" />
+         </children>
+      </VBox>
+
+      <HBox spacing="20.0">
+         <children>
+            <VBox alignment="CENTER" prefHeight="120.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+               <children>
+                  <Label text="Llaves Totales" textFill="#999999" />
+                  <Label text="150" textFill="#2b4c65">
+                     <font> <Font name="System Bold" size="36.0" /> </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="120.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+               <children>
+                  <Label text="Disponibles" textFill="#999999" />
+                  <Label text="112" textFill="#28a745">
+                     <font> <Font name="System Bold" size="36.0" /> </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="120.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+               <children>
+                  <Label text="Préstamos Activos" textFill="#999999" />
+                  <Label text="38" textFill="#17a2b8">
+                     <font> <Font name="System Bold" size="36.0" /> </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <VBox VBox.vgrow="ALWAYS" alignment="CENTER" style="-fx-border-color: #cccccc; -fx-border-style: dashed; -fx-border-width: 2; -fx-border-radius: 10;">
+         <children>
+            <Label text="El historial de actividad se implementará próximamente..." textFill="#999999" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+</VBox>

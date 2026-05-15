@@ -57,9 +57,11 @@ public class AuthService {
                     session.setRol(loginResponse.getRol());
 
                     return true;
+                } else if (response.statusCode() == 401 || response.statusCode() == 403) {
+                    throw new RuntimeException("Usuario o contraseña incorrectos.");
                 } else {
                     // Si el servidor devuelve 401 Unauthorized
-                    throw new RuntimeException("Usuario o contraseña incorrectos.");
+                    throw new RuntimeException("Error interno del servidor (HTTP " + response.statusCode() + "): " + response.body());
                 }
 
             } catch (Exception e) {

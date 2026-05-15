@@ -1,46 +1,47 @@
-//package com.iesjc.keymasterclient.views;
-//
-//import com.iesjc.keymasterclient.core.Router;
-//import com.iesjc.keymasterclient.core.View;
-//import javafx.fxml.FXML;
-//import javafx.scene.control.Label;
-//import javafx.scene.control.ToggleButton;
-//import javafx.scene.layout.StackPane;
-//
-//public class MainLayoutController {
-//
-//    @FXML private StackPane contentArea;
-//    @FXML private Label lblUserStatus;
-//    @FXML private ToggleButton btnDashboard, btnInventory, btnStaff, btnLoans, btnReports, btnSettings;
-//
-//    @FXML
-//    public void initialize() {
-//        // Notificamos al Router cuál es el contenedor de las sub-vistas
-//        Router.getInstance().setContentArea(contentArea);
-//
-//        // Binding del nombre de usuario
-//        lblUserStatus.textProperty().bind(
-//                SessionManager.getInstance().userNameProperty().map(name -> "Conectado: " + name)
-//        );
-//
-//        // Cargar Dashboard por defecto
-//        Router.getInstance().switchView(View.DASHBOARD);
-//    }
-//
-//    @FXML
-//    private void onNavigate(javafx.event.ActionEvent event) {
-//        ToggleButton selected = (ToggleButton) event.getSource();
-//        if (selected == btnDashboard) Router.getInstance().switchView(View.DASHBOARD);
-//        else if (selected == btnInventory) Router.getInstance().switchView(View.INVENTARIO);
-//        else if (selected == btnStaff) Router.getInstance().switchView(View.STAFF);
-//        else if (selected == btnLoans) Router.getInstance().switchView(View.LOANS);
-//        else if (selected == btnReports) Router.getInstance().switchView(View.REPORTS);
-//        else if (selected == btnSettings) Router.getInstance().switchView(View.SETTINGS);
-//    }
-//
-//    @FXML
-//    private void onLogout() {
-//        SessionManager.getInstance().logout();
-//        Router.getInstance().switchView(View.LOGIN);
-//    }
-//}
+package com.iesjc.keymasterclient.views;
+
+import com.iesjc.keymasterclient.core.Router;
+import com.iesjc.keymasterclient.core.SessionContext;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+
+public class MainLayoutController {
+
+    @FXML private StackPane pnlContent;
+    @FXML private Label lblUserInfo;
+    @FXML private Label lblViewTitle;
+    @FXML private Button btnSettings;
+
+    @FXML
+    public void initialize() {
+        // 1. Registramos este contenedor en el Router para poder navegar
+        Router.setContentContainer(pnlContent);
+
+        // 2. Cargamos info del usuario desde el Singleton
+        SessionContext session = SessionContext.getInstance();
+        lblUserInfo.setText("Bienvenido, " + session.getUsername() + " (" + session.getRol() + ")");
+
+        // 3. SEGURIDAD (RBAC): Ocultar ajustes si no es Jefatura
+        if (!"JEFATURA".equals(session.getRol())) {
+            btnSettings.setVisible(false);
+            btnSettings.setManaged(false); // No ocupa espacio al estar oculto
+        }
+
+        // 4. Cargamos el Dashboard por defecto al entrar
+        Router.irADashboard();
+    }
+
+    @FXML private void irADashboard() { lblViewTitle.setText("Dashboard"); Router.irADashboard(); }
+    @FXML private void irAInventario() { lblViewTitle.setText("Inventario de Llaves");  Router.irAInventario();  }
+    @FXML private void irAPersonas() { lblViewTitle.setText("Gestión de Personal"); }
+    @FXML private void irAPrestamos() { lblViewTitle.setText("Préstamos Activos"); }
+    @FXML private void irASettings() { lblViewTitle.setText("Configuración Global"); }
+
+    @FXML
+    private void handleLogout() {
+        SessionContext.getInstance().clear();
+        Router.irALogin();
+    }
+}
