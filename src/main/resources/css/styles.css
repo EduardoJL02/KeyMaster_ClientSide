@@ -1,3 +1,4 @@
+ /* TODO: ¿separar paleta de colores y estilos de la pantalla en styles.css o estilos inline? */
 .sidebar-button {
     -fx-background-color: transparent;
     -fx-text-fill: #adb5bd;

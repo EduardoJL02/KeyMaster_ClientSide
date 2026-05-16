@@ -66,4 +66,5 @@ public class Router {
     public static void irAMainLayout() { cargarLayoutBase("/fxml/MainLayoutView.fxml"); }
     public static void irADashboard() { navegarACentral("/fxml/DashboardView.fxml"); }
     public static void irAInventario() { navegarACentral("/fxml/InventarioView.fxml");   }
+    public static void irAPersonas() { navegarACentral("/fxml/PersonalView.fxml");    }
 }
