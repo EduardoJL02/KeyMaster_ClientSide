@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="450.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.iesjc.keymasterclient.views.NuevoPrestamoViewController">
+    <children>
+
+        <HBox alignment="CENTER_LEFT" prefHeight="50.0" style="-fx-background-color: #17a2b8;">
+            <children>
+                <Label text="🤝 REGISTRAR NUEVO PRÉSTAMO" textFill="WHITE">
+                    <font> <Font name="System Bold" size="16.0" /> </font>
+                </Label>
+            </children>
+            <padding> <Insets left="20.0" /> </padding>
+        </HBox>
+
+        <VBox spacing="15.0">
+            <children>
+                <Label text="DETALLES DE LA TRANSACCIÓN" textFill="#666666">
+                    <font> <Font name="System Bold" size="12.0" /> </font>
+                </Label>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Docente Receptor:" textFill="#333333">
+                            <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        <ComboBox fx:id="cmbProfesor" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="Selecciona el docente receptor..." style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 4;" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Llave a Entregar (Solo en Casillero / Disponibles):" textFill="#333333">
+                            <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        <ComboBox fx:id="cmbLlave" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="Selecciona la llave disponible..." style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 4;" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Observaciones / Notas de Entrega (Opcional):" textFill="#333333">
+                            <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        <TextArea fx:id="txtObservaciones" prefHeight="80.0" promptText="Indica incidencias preliminares o motivos (ej. Sustitución de guardia, pérdida temporal de llave previa...)" style="-fx-border-color: #cccccc; -fx-border-radius: 4;" wrapText="true" />
+                    </children>
+                </VBox>
+
+                <Label fx:id="lblError" textFill="#dc3545" wrapText="true">
+                    <font> <Font name="System Bold" size="12.0" /> </font>
+                </Label>
+            </children>
+            <padding> <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /> </padding>
+        </VBox>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-background-color: #f4f7f6;">
+            <children>
+                <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cerrarModal" style="-fx-background-color: transparent; -fx-cursor: hand;" text="CANCELAR" textFill="#666666">
+                    <font> <Font name="System Bold" size="13.0" /> </font>
+                </Button>
+                <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#handleGuardar" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 4;" text="CONCEDER Y REGISTRAR">
+                    <font> <Font name="System Bold" size="13.0" /> </font>
+                </Button>
+            </children>
+            <padding> <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /> </padding>
+        </HBox>
+    </children>
+</VBox>
