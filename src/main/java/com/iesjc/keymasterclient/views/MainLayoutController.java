@@ -37,6 +37,7 @@ public class MainLayoutController {
     @FXML private void irAInventario() { lblViewTitle.setText("Inventario de Llaves");  Router.irAInventario();  }
     @FXML private void irAPersonas() { lblViewTitle.setText("Gestión de Personal"); Router.irAPersonas();}
     @FXML private void irAPrestamos() { lblViewTitle.setText("Préstamos Activos"); Router.irAPrestamos();}
+    @FXML private void irAReportes() { lblViewTitle.setText("Informes y Auditoría del Centro"); Router.irAReportes(); }
     @FXML private void irASettings() { lblViewTitle.setText("Configuración Global"); }
 
     @FXML

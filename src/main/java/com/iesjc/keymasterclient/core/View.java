@@ -8,10 +8,10 @@ package com.iesjc.keymasterclient.core;
 public enum View {
     LOGIN("/fxml/LoginView.fxml"),
     DASHBOARD("/fxml/DashboardView.fxml"),
-    INVENTARIO("/fxml/inventory-view.fxml"),
-    STAFF("/fxml/staff-view.fxml"),
-    LOANS("/fxml/loans-view.fxml"),
-    REPORTS("/fxml/reports-view.fxml"),
+    INVENTARIO("/fxml/InventarioView.fxml"),
+    STAFF("/fxml/PersonalView.fxml"),
+    LOANS("/fxml/PrestamosView.fxml"),
+    REPORTS("/fxml/ReportesView.fxml"),
     SETTINGS("/fxml/settings-view.fxml");
 
     private final String fxmlPath;

@@ -76,6 +76,11 @@
                     <padding> <Insets left="30.0" /> </padding>
                 </Button>
 
+                <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#irAReportes" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-cursor: hand;" text="Reportes">
+                    <font> <Font size="16.0" /> </font>
+                    <padding> <Insets left="30.0" /> </padding>
+                </Button>
+
                 <VBox VBox.vgrow="ALWAYS" />
 
                 <Button fx:id="btnSettings" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#irASettings" prefHeight="50.0" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-cursor: hand;" text="Configuración">
